@@ -11,7 +11,7 @@ import (
 
 var client *reddit.Client
 
-func handle(ctx context.Context, _ interface{}) (string, error) {
+func handle(ctx context.Context) (string, error) {
 	log.Println("fetchint new post")
 	kiszamolo, resp, err := client.Subreddit.NewPosts(ctx, "kiszamolo", &reddit.ListOptions{Limit: 1})
 	if err != nil {
@@ -49,7 +49,7 @@ func main() {
 		}
 
 		client = c
-		handle(ctx, nil)
+		handle(ctx)
 		return
 	}
 
