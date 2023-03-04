@@ -3,6 +3,7 @@ module github.com/nagymarci/allampapir-bot
 go 1.19
 
 require (
+	github.com/aws/aws-lambda-go v1.38.0 // indirect
 	github.com/golang/protobuf v1.2.0 // indirect
 	github.com/google/go-querystring v1.0.0 // indirect
 	github.com/vartanbeno/go-reddit/v2 v2.0.1 // indirect
