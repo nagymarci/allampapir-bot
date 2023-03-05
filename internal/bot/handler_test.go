@@ -2,6 +2,7 @@ package bot_test
 
 import (
 	"context"
+	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -13,11 +14,22 @@ import (
 
 func TestHandler(t *testing.T) {
 	ctx := context.Background()
+
+	resp, err := ioutil.ReadFile("testdata/test.json")
+	require.NoError(t, err)
+
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		t.Log(r.Header)
+
 		t.Log("request received")
 		t.Log(r)
+		// if r.Method == http.MethodPost {
+		// 	w.WriteHeader(http.StatusOK)
+		// 	fmt.Fprint(w, `{“access_token”:“60acf87776bda95357c7564e21e0b69b”,“refresh_token”:“authorizationCode”,“token_type”:“SSO”,“expires_in”:60000}`)
+		// 	return
+		// }
+
 		w.WriteHeader(http.StatusOK)
+		w.Write(resp)
 	}))
 
 	defer srv.Close()

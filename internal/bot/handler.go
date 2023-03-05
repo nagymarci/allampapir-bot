@@ -2,6 +2,7 @@ package bot
 
 import (
 	"context"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -32,16 +33,8 @@ func Init() {
 }
 
 func InitClient(c *http.Client) {
-	credentials := reddit.Credentials{
-		ID:       os.Getenv("CLIENT_ID"),
-		Secret:   os.Getenv("CLIENT_SECRET"),
-		Username: os.Getenv("USERNAME"),
-		Password: os.Getenv("PASSWORD"),
-	}
-
 	log.Println("creating client")
-	client, err := reddit.NewClient(
-		credentials,
+	client, err := reddit.NewReadonlyClient(
 		reddit.WithHTTPClient(c),
 		reddit.WithTokenURL(os.Getenv("REDDIT_URL")),
 		reddit.WithBaseURL(os.Getenv("REDDIT_URL")),
@@ -64,7 +57,15 @@ func (h *Handler) Handle(ctx context.Context) (string, error) {
 	log.Println("fetching new post")
 	topPosts, resp, err := h.client.Subreddit.NewPosts(ctx, os.Getenv("SUBREDDIT"), &reddit.ListOptions{Limit: 1})
 	if err != nil {
-		log.Println(resp)
+		log.Printf("%+v", resp)
+		bytes, err1 := io.ReadAll(resp.Body)
+		if err1 != nil {
+			log.Fatal(err1)
+		}
+		defer resp.Body.Close()
+
+		log.Println(string(bytes))
+		log.Println(err)
 		return "", err
 	}
 
