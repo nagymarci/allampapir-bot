@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"log"
 	"os"
 
 	"github.com/aws/aws-lambda-go/lambda"
@@ -15,11 +16,12 @@ var client *reddit.Client
 
 func main() {
 	ctx := context.Background()
-	bot.Init()
 
 	if os.Getenv("ENV") == "AWS" {
 		loadEnvironmentVariables()
 	}
+
+	bot.Init()
 
 	if os.Getenv("ENV") == "DEV" {
 		bot.DefaultHandler.Handle(ctx)
@@ -44,8 +46,10 @@ func loadEnvironmentVariables() {
 		panic(err)
 	}
 
+	log.Println("setting env variables")
 	for key, value := range secrets {
+		log.Println(key)
 		os.Setenv(key, value)
 	}
-
+	log.Println("env variables set")
 }

@@ -2,7 +2,6 @@ package bot
 
 import (
 	"context"
-	"io"
 	"log"
 	"net/http"
 	"os"
@@ -60,13 +59,6 @@ func (h *Handler) Handle(ctx context.Context) error {
 	topPosts, resp, err := h.client.Subreddit.NewPosts(ctx, os.Getenv("SUBREDDIT"), &reddit.ListOptions{Limit: 10})
 	if err != nil {
 		log.Printf("%+v", resp)
-		bytes, err1 := io.ReadAll(resp.Body)
-		if err1 != nil {
-			return err
-		}
-		defer resp.Body.Close()
-
-		log.Println(string(bytes))
 		log.Println(err)
 		return err
 	}
@@ -92,7 +84,7 @@ func (h *Handler) process(ctx context.Context, post *reddit.Post) {
 		return
 	}
 
-	_, _, err := h.client.Comment.Submit(ctx, post.FullID, "Szia!\nÚgy látom, az állampapírok összehasonlításában kérsz segítséget.\nHa még nem tetted meg, látogass el a https://allampapirkalkulator.hu/ oldalra, ahol rengeteg haszos infót találsz.\nÜdv")
+	_, _, err := h.client.Comment.Submit(ctx, post.FullID, "Szia!\nÚgy látom, az állampapírok összehasonlításában kérsz segítséget.\nHa még nem tetted meg, látogass el a https://allampapirkalkulator.hu/ oldalra, ahol ki tudod számolni a hozamokat és rengeteg más haszos infót is találsz.\nÜdv")
 
 	if err != nil {
 		log.Println("error while adding comment")
@@ -159,7 +151,7 @@ func shouldComment(ctx context.Context, post *reddit.Post) bool {
 		count++
 	}
 
-	if count >= 3 {
+	if count >= 2 {
 		return true
 	}
 
