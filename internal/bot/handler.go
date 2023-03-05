@@ -6,6 +6,8 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
+	"time"
 
 	"github.com/vartanbeno/go-reddit/v2/reddit"
 )
@@ -55,12 +57,12 @@ type Handler struct {
 
 func (h *Handler) Handle(ctx context.Context) (string, error) {
 	log.Println("fetching new post")
-	topPosts, resp, err := h.client.Subreddit.NewPosts(ctx, os.Getenv("SUBREDDIT"), &reddit.ListOptions{Limit: 1})
+	topPosts, resp, err := h.client.Subreddit.NewPosts(ctx, os.Getenv("SUBREDDIT"), &reddit.ListOptions{Limit: 10})
 	if err != nil {
 		log.Printf("%+v", resp)
 		bytes, err1 := io.ReadAll(resp.Body)
 		if err1 != nil {
-			log.Fatal(err1)
+			return "", err
 		}
 		defer resp.Body.Close()
 
@@ -73,9 +75,34 @@ func (h *Handler) Handle(ctx context.Context) (string, error) {
 	for _, post := range topPosts {
 		log.Println(post.Title)
 		log.Println(post.Body)
-		res = post.Title
+		h.process(ctx, post)
 	}
 
 	log.Println("done")
 	return res, nil
+}
+
+func (h *Handler) process(ctx context.Context, post *reddit.Post) {
+	if post.Created.Add(10 * time.Minute).Before(time.Now()) {
+		log.Println("post is old, not commenting")
+		return
+	}
+
+	if !shouldComment(ctx, post) {
+		log.Println("not allampapir related, not commenting")
+		return
+	}
+
+	_, _, err := h.client.Comment.Submit(ctx, post.FullID, "this is a response")
+
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	log.Println("comment added")
+}
+
+func shouldComment(ctx context.Context, post *reddit.Post) bool {
+	return strings.Contains(post.Title, "PMAP")
 }
