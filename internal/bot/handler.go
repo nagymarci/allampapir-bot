@@ -55,23 +55,22 @@ type Handler struct {
 	client *reddit.Client
 }
 
-func (h *Handler) Handle(ctx context.Context) (string, error) {
+func (h *Handler) Handle(ctx context.Context) error {
 	log.Println("fetching new post")
 	topPosts, resp, err := h.client.Subreddit.NewPosts(ctx, os.Getenv("SUBREDDIT"), &reddit.ListOptions{Limit: 10})
 	if err != nil {
 		log.Printf("%+v", resp)
 		bytes, err1 := io.ReadAll(resp.Body)
 		if err1 != nil {
-			return "", err
+			return err
 		}
 		defer resp.Body.Close()
 
 		log.Println(string(bytes))
 		log.Println(err)
-		return "", err
+		return err
 	}
 
-	var res string
 	for _, post := range topPosts {
 		log.Println(post.Title)
 		log.Println(post.Body)
@@ -79,7 +78,7 @@ func (h *Handler) Handle(ctx context.Context) (string, error) {
 	}
 
 	log.Println("done")
-	return res, nil
+	return nil
 }
 
 func (h *Handler) process(ctx context.Context, post *reddit.Post) {
