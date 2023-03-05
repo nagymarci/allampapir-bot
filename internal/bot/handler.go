@@ -65,23 +65,25 @@ func (h *Handler) Handle(ctx context.Context) error {
 
 	for _, post := range topPosts {
 		log.Println(post.Title)
-		log.Println(post.Body)
-		h.process(ctx, post)
+		if !h.process(ctx, post) {
+			log.Println("stop processing")
+			break
+		}
 	}
 
 	log.Println("done")
 	return nil
 }
 
-func (h *Handler) process(ctx context.Context, post *reddit.Post) {
+func (h *Handler) process(ctx context.Context, post *reddit.Post) bool {
 	if post.Created.Add(10 * time.Minute).Before(time.Now()) {
 		log.Println("post is old, not commenting")
-		return
+		return false
 	}
 
 	if !shouldComment(ctx, post) {
 		log.Println("not allampapir related, not commenting")
-		return
+		return true
 	}
 
 	_, _, err := h.client.Comment.Submit(ctx, post.FullID, "Szia!\nÚgy látom, az állampapírok összehasonlításában kérsz segítséget.\nHa még nem tetted meg, látogass el a https://allampapirkalkulator.hu/ oldalra, ahol ki tudod számolni a hozamokat és rengeteg más haszos infót is találsz.\nÜdv")
@@ -89,10 +91,12 @@ func (h *Handler) process(ctx context.Context, post *reddit.Post) {
 	if err != nil {
 		log.Println("error while adding comment")
 		log.Println(err)
-		return
+		return true
 	}
 
 	log.Println("comment added")
+
+	return true
 }
 
 func shouldComment(ctx context.Context, post *reddit.Post) bool {
