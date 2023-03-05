@@ -23,7 +23,7 @@ func Init() {
 	}
 
 	log.Println("creating client")
-	client, err := reddit.NewClient(credentials, reddit.WithBaseURL(os.Getenv("REDDIT_URL")))
+	client, err := reddit.NewClient(credentials)
 
 	if err != nil {
 		panic(err)
@@ -92,9 +92,10 @@ func (h *Handler) process(ctx context.Context, post *reddit.Post) {
 		return
 	}
 
-	_, _, err := h.client.Comment.Submit(ctx, post.FullID, "this is a response")
+	_, _, err := h.client.Comment.Submit(ctx, post.FullID, "Szia!\nÚgy látom, az állampapírok összehasonlításában kérsz segítséget.\nHa még nem tetted meg, látogass el a https://allampapirkalkulator.hu/ oldalra, ahol rengeteg haszos infót találsz.\nÜdv")
 
 	if err != nil {
+		log.Println("error while adding comment")
 		log.Println(err)
 		return
 	}
@@ -103,5 +104,64 @@ func (h *Handler) process(ctx context.Context, post *reddit.Post) {
 }
 
 func shouldComment(ctx context.Context, post *reddit.Post) bool {
-	return strings.Contains(post.Title, "PMAP")
+	if strings.Contains(post.Body, "allampapirkalkulator") ||
+		strings.Contains(post.Body, "állampapírkalkulátor") ||
+		strings.Contains(post.Body, "állampapír kalkulátor") ||
+		strings.Contains(post.Body, "allampapir kalkulator") {
+		return false
+	}
+
+	count := 0
+	if strings.Contains(post.Title, "PMAP") ||
+		strings.Contains(post.Title, "PMÁP") {
+		count++
+	}
+
+	if strings.Contains(post.Title, "BMAP") ||
+		strings.Contains(post.Title, "BMÁP") {
+		count++
+	}
+
+	if strings.Contains(post.Title, "PEMAP") ||
+		strings.Contains(post.Title, "PEMÁP") {
+		count++
+	}
+
+	if strings.Contains(post.Title, "DKJ") {
+		count++
+	}
+
+	if count >= 2 {
+		return true
+	}
+
+	if strings.Contains(post.Body, "PMAP") ||
+		strings.Contains(post.Body, "PMÁP") {
+		count++
+	}
+
+	if strings.Contains(post.Body, "BMAP") ||
+		strings.Contains(post.Body, "BMÁP") {
+		count++
+	}
+
+	if strings.Contains(post.Body, "PEMAP") ||
+		strings.Contains(post.Body, "PEMÁP") {
+		count++
+	}
+
+	if strings.Contains(post.Title, "DKJ") {
+		count++
+	}
+
+	if strings.Contains(post.Body, " hozam") ||
+		strings.Contains(post.Title, "hozam") {
+		count++
+	}
+
+	if count >= 3 {
+		return true
+	}
+
+	return false
 }

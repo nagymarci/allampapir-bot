@@ -71,9 +71,17 @@ func TestFlows(t *testing.T) {
 			comment: true,
 			created: time.Now().Unix(),
 		},
+		"one_result_comment_2": {
+			comment: true,
+			created: time.Now().Unix(),
+		},
 		"one_result_too_old_to_comment": {
 			comment: false,
 			created: time.Now().Add(-11 * time.Minute).Unix(),
+		},
+		"one_result_no_comment_allampapir": {
+			comment: false,
+			created: time.Now().Unix(),
 		},
 	}
 
