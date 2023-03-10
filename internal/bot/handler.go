@@ -108,23 +108,29 @@ func shouldComment(ctx context.Context, post *reddit.Post) bool {
 	}
 
 	count := 0
+	counts := map[string]int{}
+
 	if strings.Contains(post.Title, "PMAP") ||
 		strings.Contains(post.Title, "PMÁP") {
 		count++
+		counts["PMAP"]++
 	}
 
 	if strings.Contains(post.Title, "BMAP") ||
 		strings.Contains(post.Title, "BMÁP") {
 		count++
+		counts["BMAP"]++
 	}
 
 	if strings.Contains(post.Title, "PEMAP") ||
 		strings.Contains(post.Title, "PEMÁP") {
 		count++
+		counts["PEMAP"]++
 	}
 
 	if strings.Contains(post.Title, "DKJ") {
 		count++
+		counts["DKJ"]++
 	}
 
 	if count >= 2 {
@@ -134,28 +140,33 @@ func shouldComment(ctx context.Context, post *reddit.Post) bool {
 	if strings.Contains(post.Body, "PMAP") ||
 		strings.Contains(post.Body, "PMÁP") {
 		count++
+		counts["PMAP"]++
 	}
 
 	if strings.Contains(post.Body, "BMAP") ||
 		strings.Contains(post.Body, "BMÁP") {
 		count++
+		counts["BMAP"]++
 	}
 
 	if strings.Contains(post.Body, "PEMAP") ||
 		strings.Contains(post.Body, "PEMÁP") {
 		count++
+		counts["PEMAP"]++
 	}
 
 	if strings.Contains(post.Title, "DKJ") {
 		count++
+		counts["DKJ"]++
 	}
 
 	if strings.Contains(post.Body, " hozam") ||
 		strings.Contains(post.Title, "hozam") {
 		count++
+		counts["hozam"]++
 	}
 
-	if count >= 2 {
+	if len(counts) >= 2 {
 		return true
 	}
 
