@@ -122,10 +122,10 @@ func shouldComment(ctx context.Context, post *reddit.Post) bool {
 		counts["BMAP"]++
 	}
 
-	if strings.Contains(post.Title, "PEMAP") ||
-		strings.Contains(post.Title, "PEMÁP") {
+	if strings.Contains(post.Title, "EMAP") ||
+		strings.Contains(post.Title, "EMÁP") {
 		count++
-		counts["PEMAP"]++
+		counts["EMAP"]++
 	}
 
 	if strings.Contains(post.Title, "DKJ") {
@@ -149,10 +149,10 @@ func shouldComment(ctx context.Context, post *reddit.Post) bool {
 		counts["BMAP"]++
 	}
 
-	if strings.Contains(post.Body, "PEMAP") ||
-		strings.Contains(post.Body, "PEMÁP") {
+	if strings.Contains(post.Body, "EMAP") ||
+		strings.Contains(post.Body, "EMÁP") {
 		count++
-		counts["PEMAP"]++
+		counts["EMAP"]++
 	}
 
 	if strings.Contains(post.Title, "DKJ") {
