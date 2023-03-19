@@ -86,7 +86,7 @@ func (h *Handler) process(ctx context.Context, post *reddit.Post) bool {
 		return true
 	}
 
-	_, _, err := h.client.Comment.Submit(ctx, post.FullID, "Szia!\nÚgy látom, az állampapírok összehasonlításában kérsz segítséget.\nHa még nem tetted meg, látogass el a https://allampapirkalkulator.hu/ oldalra, ahol ki tudod számolni a hozamokat és rengeteg más haszos infót is találsz.\nÜdv")
+	_, _, err := h.client.Comment.Submit(ctx, post.FullID, "Szia!\nÚgy látom, az állampapírok összehasonlításában kérsz segítséget.\nHa még nem tetted meg, látogass el a https://allampapirkalkulator.hu/ oldalra, ahol ki tudod számolni a hozamokat és rengeteg más hasznos infót is találsz.\nÜdv")
 
 	if err != nil {
 		log.Println("error while adding comment")
